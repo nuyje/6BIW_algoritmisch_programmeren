@@ -241,11 +241,13 @@ figure { margin: 0; }
 .pc { border: 1px solid var(--rule); border-radius: var(--radius); background: var(--sheet); padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: 0.7rem; }
 .pc h3 { display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; }
 .pc ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; }
-.pc li { display: grid; grid-template-columns: 1.35rem 1fr; gap: 0.5rem; margin: 0; }
+.pc li { position: relative; padding-left: 1.9rem; margin: 0; }
 .pc li::before {
   content: "+"; font-weight: 700; width: 1.35rem; height: 1.35rem; border-radius: 50%; display: grid; place-items: center;
-  font-size: 0.95rem; line-height: 1; margin-top: 0.15rem; background: var(--ok-soft); color: var(--ok);
+  position: absolute; left: 0; top: 0.15rem;
+  font-size: 0.95rem; line-height: 1; background: var(--ok-soft); color: var(--ok);
 }
+td code { white-space: nowrap; overflow-wrap: normal; }
 .pc.con li::before { content: "\2212"; background: var(--bad-soft); color: var(--bad); }
 .pc .sym { color: var(--ok); }
 .pc.con .sym { color: var(--bad); }
@@ -1089,6 +1091,28 @@ Resultaat: 4! = 24
         <p>Het algoritme van Euclides berekent de ggd recursief:</p>
         <div class="formula">ggd(a, 0) = a
 ggd(a, b) = ggd(b, a % b)     als b ≠ 0</div>
+        <div class="prose">
+          <h4>Hoe werkt het algoritme?</h4>
+          <p>De operator <code>%</code> geeft de <strong>rest</strong> bij een gehele deling. <code>48 % 18</code> is 12, want <span style="white-space:nowrap">48 = 2 × 18 + 12</span>.</p>
+          <p>Het algoritme steunt op één eigenschap: elk getal dat zowel a als b deelt, deelt ook de rest <code>a % b</code>. Daarom hebben a en b dezelfde ggd als b en <code>a % b</code>. Zo vervangen we het probleem telkens door een kleiner probleem met hetzelfde antwoord. Dat is de <strong>recursieve stap</strong>.</p>
+          <p>Zodra de rest 0 is, stoppen we. Elk getal deelt 0, dus <code>ggd(a, 0) = a</code>. Dat is het <strong>basisgeval</strong>.</p>
+        </div>
+        <div>
+          <h4>Rekenvoorbeeld: 48 balpennen en 18 potloden</h4>
+          <div class="table-wrap small-table">
+            <table>
+              <thead><tr><th>Oproep</th><th class="num">a</th><th class="num">b</th><th class="num">a % b</th><th>Wat gebeurt er?</th></tr></thead>
+              <tbody>
+                <tr><td><code>Ggd(48, 18)</code></td><td class="num">48</td><td class="num">18</td><td class="num">12</td><td>48 = 2 × 18 + 12, dus roep <code>Ggd(18, 12)</code> op</td></tr>
+                <tr><td><code>Ggd(18, 12)</code></td><td class="num">18</td><td class="num">12</td><td class="num">6</td><td>18 = 1 × 12 + 6, dus roep <code>Ggd(12, 6)</code> op</td></tr>
+                <tr><td><code>Ggd(12, 6)</code></td><td class="num">12</td><td class="num">6</td><td class="num">0</td><td>12 = 2 × 6 + 0, dus roep <code>Ggd(6, 0)</code> op</td></tr>
+                <tr><td><code>Ggd(6, 0)</code></td><td class="num">6</td><td class="num">0</td><td class="num">–</td><td>b is 0: basisgeval, geef <strong>6</strong> terug</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p>De ggd van 48 en 18 is <strong>6</strong>. De groothandel kan dus 6 pakketten maken, elk met 48 / 6 = 8 balpennen en 18 / 6 = 3 potloden. De methode werd <strong>4 keer</strong> opgeroepen. Gebruik dit voorbeeld om je eigen methode te testen voor je de grote getallen invult.</p>
+        <p class="note">Is a kleiner dan b? Dan wisselen de getallen bij de eerste oproep gewoon van plaats: <code>Ggd(18, 48)</code> berekent 18 % 48 = 18 en roept dus <code>Ggd(48, 18)</code> op.</p>
         <div>
           <h4>Opdracht</h4>
           <ol>
@@ -1205,7 +1229,7 @@ internal class Program
       </div>
       <div class="prose">
         <p>Bekende voorbeelden zijn <strong>merge sort</strong> en quicksort om te sorteren, en <strong>binair zoeken</strong> om iets op te zoeken in een gesorteerde lijst. Als uitgewerkt voorbeeld nemen we merge sort.</p>
-        <p>Waarom is dat sneller? Een lijst van 8 elementen halveren we 3 keer tot losse elementen (2<sup>3</sup> = 8). Een lijst van 1 000 000 elementen halveren we maar 20 keer (2<sup>20</sup> ≈ 1 000 000). Op elk niveau vergelijken we samen ongeveer n elementen. Merge sort doet dus ongeveer <strong>n × log<sub>2</sub>(n)</strong> stappen, terwijl bubble sort er ongeveer <strong>n²</strong> nodig heeft.</p>
+        <p>Waarom is dat sneller? Een lijst van 8 elementen halveren we 3 keer tot losse elementen (2<sup>3</sup> = 8). Een lijst van 1 000 000 elementen halveren we maar 20 keer (2<sup>20</sup> ≈ 1 000 000). Op elk niveau vergelijken we samen ongeveer n elementen. Merge sort doet dus ongeveer <strong>n × log<sub>2</sub>(n)</strong> stappen. Een eenvoudig sorteeralgoritme zoals bubble sort heeft er ongeveer <strong>n²</strong> nodig. Hoe bubble sort werkt, lees je <a href="#verdeel-snelheid">bij de snelheidsvergelijking</a>.</p>
       </div>
     </div>
 
@@ -1348,6 +1372,14 @@ Na het sorteren  : 3, 9, 10, 15, 27, 38, 43, 82</pre></figure>
 
     <div class="block" id="verdeel-snelheid">
       <h2>Hoeveel sneller?</h2>
+      <div class="callout info">
+        <h3>Eerst: wat is bubble sort?</h3>
+        <p>Bubble sort is een eenvoudig sorteeralgoritme. We overlopen de lijst van voor naar achter en vergelijken telkens twee getallen die naast elkaar staan. Staan ze in de verkeerde volgorde, dan wisselen we ze om. Na één doorloop staat het grootste getal achteraan, zoals een luchtbel die naar boven stijgt. Die doorloop herhalen we tot er niets meer te wisselen valt.</p>
+        <div class="formula">5 3 8 1   →   3 5 8 1    5 en 3 wisselen
+3 5 8 1   →   3 5 8 1    5 en 8 staan goed
+3 5 8 1   →   3 5 1 8    8 en 1 wisselen: 8 staat achteraan</div>
+        <p>Bij n getallen doen we ongeveer n doorlopen van telkens ongeveer n vergelijkingen: samen ongeveer <strong>n²</strong> stappen. Bubble sort verdeelt het probleem niet, maar vergelijkt gewoon buur na buur.</p>
+      </div>
       <div class="prose"><p>We sorteerden willekeurige getallen met bubble sort en met merge sort. Gemeten op een gewone computer (Release-build); de exacte tijden verschillen per computer.</p></div>
       <div class="table-wrap small-table">
         <table>
